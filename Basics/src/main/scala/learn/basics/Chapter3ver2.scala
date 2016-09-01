@@ -1,6 +1,10 @@
 package learn.basics
 
+import java.lang.Comparable
+
 import org.slf4j.LoggerFactory
+
+import scala.math.Ordered
 
 /**
   * Created by Ganger on 8/27/2016.
@@ -10,9 +14,13 @@ case object Nil extends BinaryTree[Nothing]
 case class Node[A](node: A, left: BinaryTree[A], right: BinaryTree[A]) extends BinaryTree[A]
 
 object BinaryTree {
+  val logger = LoggerFactory.getLogger(getClass)
   def compareCommon[A](first: A, second: A): Int = {
     (first, second) match {
-      case (f: Comparable[A], s: Comparable[A]) => f.compareTo(s)
+      case (f: Int, s: Int) => f.compareTo(s)
+      case (f: Double, s: Double) => f.compareTo(s)
+      case (f: Float, s: Float) => f.compareTo(s)
+      case (f: Boolean, s: Boolean) => f.compareTo(s)
       case (_) => first.toString.compareTo(second.toString)
     }
   }
@@ -41,13 +49,19 @@ object BinaryTree {
     if (tree == Nil) {
       new Node[A](a, Nil, Nil)
     } else {
-      val node = tree.asInstanceOf[Node[A]]
-      if (comparator(a, node.node) < 0) {
-        Node[A](a, node, Nil)
+      val head = tree.asInstanceOf[Node[A]]
+      if (comparator(a, head.node) < 0) {
+        new Node[A](head.node, construct(comparator, a, head.left), head.right)
+      } else if (comparator(a, head.node) > 0) {
+        new Node[A](head.node, head.left, construct(comparator, a, head.right))
       } else {
-        construct[A](comparator, node.node, node.left)
+        head
       }
     }
+  }
+
+  def find[A](a: A, tree: BinaryTree[A]): Boolean = {
+    find(compareCommon, a, tree)
   }
 
   def find[A](comparator: (A, A) => Int, a: A, tree: BinaryTree[A]): Boolean = {
@@ -93,5 +107,13 @@ object Chapter3ver2 {
   def main(args: Array[String]): Unit = {
     val tree = BinaryTree[Int](1,2,-3,5,-8,9)
     logger.info(s"Tree: ${tree}")
+    logger.info(s"Find 2: ${BinaryTree.find(2, tree)}")
+    logger.info(s"Find 6: ${BinaryTree.find(6, tree)}")
+    logger.info(s"Find 9: ${BinaryTree.find(9, tree)}")
+    logger.info(s"Find -8: ${BinaryTree.find(-8, tree)}")
+    logger.info(s"Find -7: ${BinaryTree.find(-7, tree)}")
+    val tree2 = BinaryTree.add(7, tree)
+    logger.info(s"Tree2: ${tree2}")
+    logger.info(s"Find2 7: ${BinaryTree.find(7, tree2)}")
   }
 }
