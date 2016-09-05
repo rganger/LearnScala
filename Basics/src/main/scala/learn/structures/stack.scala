@@ -1,4 +1,4 @@
-package learn.basics
+package learn.structures
 
 import org.slf4j.LoggerFactory
 

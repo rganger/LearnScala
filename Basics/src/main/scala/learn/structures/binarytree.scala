@@ -1,10 +1,6 @@
-package learn.basics
-
-import java.lang.Comparable
+package learn.structures
 
 import org.slf4j.LoggerFactory
-
-import scala.math.Ordered
 
 /**
   * Created by Ganger on 8/27/2016.
